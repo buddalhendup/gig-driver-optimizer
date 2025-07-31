@@ -1,0 +1,70 @@
+/* Custom styles for Gig Driver Optimization Tool */
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background-color: #003366;
+  color: white;
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+header .logo {
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-decoration: none;
+  color: white;
+}
+
+header .button {
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  color: white;
+  background-color: #0066cc;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+header .button:hover {
+  background-color: #004a99;
+}
+
+main > section {
+  margin: 2rem;
+}
+
+section h2 {
+  margin-top: 0;
+}
+
+table {
+  width: 100%;
+  overflow-x: auto;
+}
+
+#map {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Responsive table scroll */
+table thead {
+  background-color: #f2f2f2;
+}
+
+table th,
+table td {
+  padding: 0.5rem;
+  text-align: left;
+}
+
+table tr:nth-child(even) {
+  background-color: #fafafa;
+}

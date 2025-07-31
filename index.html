@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gig Driver Optimization Tool</title>
+  <!-- Import a simple CSS framework for responsive layout -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mini.css/3.0.1/mini-default.min.css" integrity="sha512-RcZ3Y8mEkN4j4KByw/sYjfqoWh7o9XfY2cQVntn0LUZTjYyVyeZ7xA1qcQ16NmDgZxB3UHxU1ZPFZM2W4gVewA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="style.css" />
+  <!-- Mapbox GL JS (requires user token) -->
+  <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+  <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
+  <!-- Chart.js for visualizations -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header class="sticky">
+    <a href="#" class="logo">Gig Driver Tool</a>
+    <a href="#orders" class="button">Orders</a>
+    <a href="#dashboard" class="button">Dashboard</a>
+    <a href="#route" class="button">Route</a>
+    <a href="#expenses" class="button">Expenses</a>
+    <a href="#schedule" class="button">Schedule</a>
+    <a href="#settings" class="button">Settings</a>
+  </header>
+
+  <main>
+    <!-- Orders Section -->
+    <section id="orders">
+      <h2>Order Selection Assistant</h2>
+      <form id="orderForm">
+        <div class="row">
+          <div class="col-sm-4">
+            <label for="platform">Platform</label>
+            <select id="platform" required>
+              <option value="UberEats">Uber&nbsp;Eats</option>
+              <option value="Spark">Spark</option>
+              <option value="DoorDash">DoorDash</option>
+              <option value="GoPuff">GoPuff</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="col-sm-4">
+            <label for="pickup">Pick‑up Address</label>
+            <input type="text" id="pickup" placeholder="123 Main St" required />
+          </div>
+          <div class="col-sm-4">
+            <label for="dropoff">Drop‑off Address</label>
+            <input type="text" id="dropoff" placeholder="456 Elm St" required />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-2">
+            <label for="pay">Pay ($)</label>
+            <input type="number" id="pay" min="0" step="0.01" required />
+          </div>
+          <div class="col-sm-2">
+            <label for="miles">Miles</label>
+            <input type="number" id="miles" min="0" step="0.1" required />
+          </div>
+          <div class="col-sm-2">
+            <label for="minutes">Minutes</label>
+            <input type="number" id="minutes" min="0" step="1" required />
+          </div>
+          <div class="col-sm-6">
+            <label for="notes">Notes</label>
+            <input type="text" id="notes" />
+          </div>
+        </div>
+        <button type="submit" class="primary">Add Order</button>
+      </form>
+      <h3>Available Orders</h3>
+      <table id="ordersTable">
+        <thead>
+          <tr>
+            <th>Platform</th>
+            <th>Pick‑up</th>
+            <th>Drop‑off</th>
+            <th>Pay ($)</th>
+            <th>Miles</th>
+            <th>Minutes</th>
+            <th>$ / mile</th>
+            <th>$ / hr</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="ordersBody"></tbody>
+      </table>
+    </section>
+
+    <!-- Dashboard Section -->
+    <section id="dashboard">
+      <h2>Earnings & Analytics Dashboard</h2>
+      <div class="row">
+        <div class="col-sm-6">
+          <canvas id="earningsChart"></canvas>
+        </div>
+        <div class="col-sm-6">
+          <canvas id="platformChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Route Section -->
+    <section id="route">
+      <h2>Route Optimization Tool</h2>
+      <p>Use this tool to optimize the route for your accepted orders. Enter your Mapbox access token in Settings to enable the map.</p>
+      <div id="map" style="width: 100%; height: 400px; margin-bottom: 1em;"></div>
+      <button id="optimizeRoute" class="secondary" disabled>Optimize Route</button>
+      <div id="routeInfo"></div>
+    </section>
+
+    <!-- Expenses Section -->
+    <section id="expenses">
+      <h2>Expense & Tax Tracker</h2>
+      <form id="expenseForm">
+        <div class="row">
+          <div class="col-sm-4">
+            <label for="expenseDate">Date</label>
+            <input type="date" id="expenseDate" required />
+          </div>
+          <div class="col-sm-4">
+            <label for="category">Category</label>
+            <select id="category" required>
+              <option value="Fuel">Fuel</option>
+              <option value="Maintenance">Maintenance</option>
+              <option value="Parking">Parking</option>
+              <option value="Tolls">Tolls</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="col-sm-4">
+            <label for="amount">Amount ($)</label>
+            <input type="number" id="amount" min="0" step="0.01" required />
+          </div>
+        </div>
+        <button type="submit" class="primary">Add Expense</button>
+      </form>
+      <h3>Expenses</h3>
+      <table id="expensesTable">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Category</th>
+            <th>Amount ($)</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="expensesBody"></tbody>
+      </table>
+      <p id="expenseSummary"></p>
+    </section>
+
+    <!-- Schedule Section -->
+    <section id="schedule">
+      <h2>Shift & Schedule Planner</h2>
+      <form id="shiftForm">
+        <div class="row">
+          <div class="col-sm-4">
+            <label for="shiftDate">Date</label>
+            <input type="date" id="shiftDate" required />
+          </div>
+          <div class="col-sm-4">
+            <label for="startTime">Start Time</label>
+            <input type="time" id="startTime" required />
+          </div>
+          <div class="col-sm-4">
+            <label for="endTime">End Time</label>
+            <input type="time" id="endTime" required />
+          </div>
+        </div>
+        <button type="submit" class="primary">Add Shift</button>
+      </form>
+      <h3>Scheduled Shifts</h3>
+      <table id="shiftsTable">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Start</th>
+            <th>End</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="shiftsBody"></tbody>
+      </table>
+    </section>
+
+    <!-- Settings Section -->
+    <section id="settings">
+      <h2>Settings</h2>
+      <form id="settingsForm">
+        <div class="row">
+          <div class="col-sm-6">
+            <label for="mapToken">Mapbox Access Token</label>
+            <input type="text" id="mapToken" placeholder="Your Mapbox token" />
+          </div>
+          <div class="col-sm-6">
+            <label for="alertThreshold">Offer Alert Threshold ($/mile)</label>
+            <input type="number" id="alertThreshold" min="0" step="0.1" />
+          </div>
+        </div>
+        <button type="submit" class="primary">Save Settings</button>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2025 Gig Driver Optimization Tool. Built for independent drivers.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
